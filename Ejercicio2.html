@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 2 Excel - U.E. Vicentina Daniel Hermida</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Estilos para ocultar elementos al imprimir/guardar como PDF */
+        @media print {
+            .no-print { display: none !important; }
+            body { 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+                background-color: white;
+            }
+            .tab-content { display: block !important; margin-bottom: 2rem; }
+            .tab-btn { display: none !important; }
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Estilos de tabla simulando Excel */
+        .excel-cell { border: 1px solid #d1d5db; padding: 0.5rem 1rem; }
+        .excel-header { background-color: #f3f4f6; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased selection:bg-green-200">
+
+    <nav class="bg-green-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center py-3">
+                
+                <div class="flex items-center gap-4 mb-3 md:mb-0">
+                    <img src="66307.jpg" alt="Logo U.E. Vicentina Daniel Hermida" class="h-12 w-12 rounded-full border-2 border-white object-cover bg-white shadow-sm">
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold tracking-wide leading-tight">U.E. Vicentina Daniel Hermida</h1>
+                        <p class="text-xs md:text-sm text-green-200 font-medium">Periodo Lectivo 2026-2027</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-3 no-print">
+                    <button onclick="window.print()" class="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-md font-semibold transition-colors shadow-sm flex items-center gap-2 text-sm border border-red-200">
+                        <i class="fa-solid fa-file-pdf"></i> Guardar como PDF
+                    </button>
+                    <button onclick="descargarExcel()" class="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-md font-semibold transition-colors shadow-sm flex items-center gap-2 text-sm border border-green-400">
+                        <i class="fa-solid fa-file-excel"></i> Descargar Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-gradient-to-br from-green-50 to-green-100 border-b border-green-200 py-10 px-4 text-center">
+        <div class="max-w-3xl mx-auto">
+            <div class="inline-flex items-center justify-center bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">
+                Informática Aplicada
+            </div>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-4">Ejercicio 2: Operaciones y Funciones Estadísticas</h2>
+            <p class="text-slate-600 text-base md:text-lg">
+                Resuelve los ejercicios propuestos en cada pestaña. Aprenderás a dominar la jerarquía de operadores matemáticos y a utilizar las funciones estadísticas básicas de Excel.
+            </p>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 no-print">
+        <div class="flex flex-nowrap overflow-x-auto border-b border-slate-300">
+            <button onclick="openTab('tab-elemental', this)" data-color="green" class="tab-btn px-6 py-3 font-bold text-green-700 border-b-4 border-green-500 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] whitespace-nowrap transition-colors">
+                <i class="fa-solid fa-calculator mr-2"></i>ELEMENTAL
+            </button>
+            <button onclick="openTab('tab-operaciones', this)" data-color="pink" class="tab-btn px-6 py-3 font-bold text-slate-500 border-b-4 border-transparent hover:text-pink-600 hover:bg-pink-50 whitespace-nowrap transition-colors">
+                <i class="fa-solid fa-chart-bar mr-2"></i>OPERACIONES
+            </button>
+            <button onclick="openTab('tab-instrucciones', this)" data-color="blue" class="tab-btn px-6 py-3 font-bold text-slate-500 border-b-4 border-transparent hover:text-blue-600 hover:bg-blue-50 whitespace-nowrap transition-colors">
+                <i class="fa-solid fa-list-check mr-2"></i>INSTRUCCIONES
+            </button>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-16">
+
+        <!-- HOJA 1: ELEMENTAL -->
+        <div id="tab-elemental" class="tab-content active bg-white p-6 md:p-8 rounded-b-lg shadow-sm border border-slate-200 border-t-0 border-t-green-500" style="border-top-width: 4px;">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-green-100 p-2 rounded text-green-700"><i class="fa-solid fa-table"></i></div>
+                <h3 class="text-2xl font-bold text-slate-800">Operaciones Elementales</h3>
+            </div>
+            
+            <p class="text-slate-600 mb-6">Calcula el resultado de las siguientes operaciones básicas. Recuerda utilizar la regla del signo <code class="bg-slate-100 text-green-700 px-1.5 py-0.5 rounded font-mono font-bold">=</code> al inicio de cada fórmula.</p>
+            
+            <div class="overflow-x-auto mb-10">
+                <table class="min-w-full border-collapse border border-slate-300 text-center text-sm md:text-base">
+                    <thead>
+                        <tr class="bg-yellow-100 text-slate-700">
+                            <th class="excel-cell">Operación</th>
+                            <th class="excel-cell text-red-600">Símbolo</th>
+                            <th class="excel-cell">Ejemplo a Digitar</th>
+                            <th class="excel-cell bg-slate-100">Resultado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="excel-cell font-medium text-left pl-6">Suma</td><td class="excel-cell font-bold text-lg text-red-600">+</td><td class="excel-cell font-mono">=5+5</td><td class="excel-cell bg-slate-50 w-32"></td></tr>
+                        <tr><td class="excel-cell font-medium text-left pl-6">Resta</td><td class="excel-cell font-bold text-lg text-red-600">-</td><td class="excel-cell font-mono">=10-3</td><td class="excel-cell bg-slate-50"></td></tr>
+                        <tr><td class="excel-cell font-medium text-left pl-6">Multiplicación</td><td class="excel-cell font-bold text-lg text-red-600">*</td><td class="excel-cell font-mono">=4*4</td><td class="excel-cell bg-slate-50"></td></tr>
+                        <tr><td class="excel-cell font-medium text-left pl-6">División</td><td class="excel-cell font-bold text-lg text-red-600">/</td><td class="excel-cell font-mono">=20/4</td><td class="excel-cell bg-slate-50"></td></tr>
+                        <tr><td class="excel-cell font-medium text-left pl-6">Exponenciación</td><td class="excel-cell font-bold text-lg text-red-600">^</td><td class="excel-cell font-mono">=2^3</td><td class="excel-cell bg-slate-50"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mb-10">
+                <div class="bg-yellow-300 inline-block px-4 py-1.5 font-bold text-slate-800 rounded-t-md border-b-2 border-yellow-400 shadow-sm">CASO TIPO 1</div>
+                <div class="bg-slate-50 border border-slate-200 p-4 rounded-b-md rounded-tr-md shadow-sm mb-4">
+                    <p class="text-sm md:text-base text-slate-700 font-semibold mb-1"><i class="fa-solid fa-triangle-exclamation text-yellow-600 mr-2"></i>En caso de que utilices varios operadores en una misma fórmula, Excel establece prioridad entre ellos:</p>
+                    <p class="text-sm md:text-base text-slate-600 ml-6">En 1er lugar las multiplicaciones y divisiones, y luego las sumas y las restas.</p>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="border-collapse border border-slate-400 text-center bg-white shadow-sm min-w-[300px]">
+                        <thead>
+                            <tr class="bg-slate-200">
+                                <th class="border border-slate-400 px-6 py-2 font-bold text-slate-700 w-2/3">calcular</th>
+                                <th class="border border-slate-400 px-6 py-2 font-bold text-slate-700 w-1/3">resultado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="font-mono text-sm">
+                            <tr><td class="border border-slate-300 px-6 py-2 text-left">2+3*4</td><td class="border border-slate-300 px-6 py-2 bg-slate-50"></td></tr>
+                            <tr><td class="border border-slate-300 px-6 py-2 text-left">32-30/2</td><td class="border border-slate-300 px-6 py-2 bg-slate-50"></td></tr>
+                            <tr><td class="border border-slate-300 px-6 py-2 text-left">23+7-5/5</td><td class="border border-slate-300 px-6 py-2 bg-slate-50"></td></tr>
+                            <tr><td class="border border-slate-300 px-6 py-2 text-left">23+7-5/5*4</td><td class="border border-slate-300 px-6 py-2 bg-slate-50"></td></tr>
+                            <tr><td class="border border-slate-300 px-6 py-2 text-left">2^3-5*5</td><td class="border border-slate-300 px-6 py-2 bg-slate-50"></td></tr>
+                            <tr><td class="border border-slate-300 px-6 py-2 text-left">5*5-3^2</td><td class="border border-slate-300 px-6 py-2 bg-slate-50"></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <div class="bg-yellow-300 inline-block px-4 py-1.5 font-bold text-slate-800 rounded-t-md border-b-2 border-yellow-400 shadow-sm">CASO TIPO 2</div>
+                <div class="bg-slate-50 border border-slate-200 p-4 rounded-b-md rounded-tr-md shadow-sm mb-4">
+                    <p class="text-sm md:text-base text-slate-700 font-semibold"><i class="fa-solid fa-code text-blue-600 mr-2"></i>Para cambiar las prioridades en las operaciones utilizamos los paréntesis.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse border border-slate-400 text-center bg-white shadow-sm">
+                            <thead>
+                                <tr class="bg-slate-200">
+                                    <th class="border border-slate-400 px-4 py-2 font-bold text-slate-700 w-2/3">calcular</th>
+                                    <th class="border border-slate-400 px-4 py-2 font-bold text-slate-700 w-1/3">resultado</th>
+                                </tr>
+                            </thead>
+                            <tbody class="font-mono text-sm">
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">(2+3)*4</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">(32-30)/2</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">(23+7-5)/5</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">(23+7-5)/5*4</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">(2^3-5)*5</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">5*(5-3^2)</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse border border-slate-400 text-center bg-white shadow-sm">
+                            <thead>
+                                <tr class="bg-slate-200">
+                                    <th class="border border-slate-400 px-4 py-2 font-bold text-slate-700 w-2/3">calcular</th>
+                                    <th class="border border-slate-400 px-4 py-2 font-bold text-slate-700 w-1/3">resultado</th>
+                                </tr>
+                            </thead>
+                            <tbody class="font-mono text-sm">
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">23+(7-5)/5</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">23+(7-5/5)</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">(23+7-5/5)*4</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">2^(3-5*5)</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">(5*5-3)^2</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                                <tr><td class="border border-slate-300 px-4 py-2 text-left">((5*5-3)^2)+2</td><td class="border border-slate-300 px-4 py-2 bg-slate-50"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOJA 2: OPERACIONES -->
+        <div id="tab-operaciones" class="tab-content bg-white p-6 md:p-8 rounded-b-lg shadow-sm border border-slate-200 border-t-0 border-t-pink-500" style="border-top-width: 4px;">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-pink-100 p-2 rounded text-pink-600"><i class="fa-solid fa-chart-line"></i></div>
+                <h3 class="text-2xl font-bold text-slate-800">Funciones Estadísticas</h3>
+            </div>
+            
+            <p class="text-slate-600 mb-6">
+                Calcula los totales, máximos, mínimos y promedios por filas y columnas utilizando las funciones 
+                <code class="bg-pink-50 text-pink-700 px-1.5 py-0.5 rounded font-mono font-bold border border-pink-100">=SUMA()</code>, 
+                <code class="bg-pink-50 text-pink-700 px-1.5 py-0.5 rounded font-mono font-bold border border-pink-100">=PROMEDIO()</code>, 
+                <code class="bg-pink-50 text-pink-700 px-1.5 py-0.5 rounded font-mono font-bold border border-pink-100">=MAX()</code> y 
+                <code class="bg-pink-50 text-pink-700 px-1.5 py-0.5 rounded font-mono font-bold border border-pink-100">=MIN()</code>.
+            </p>
+            
+            <div class="overflow-x-auto shadow-sm rounded-lg border border-slate-300">
+                <table class="min-w-full border-collapse text-sm text-right">
+                    <thead>
+                        <tr class="bg-slate-800 text-white text-center">
+                            <th class="border-r border-slate-600 px-4 py-3 text-left w-48 uppercase tracking-wider font-semibold">VENDEDORES</th>
+                            <th class="border-r border-slate-600 px-4 py-3 uppercase tracking-wider font-semibold">Enero</th>
+                            <th class="border-r border-slate-600 px-4 py-3 uppercase tracking-wider font-semibold">Febrero</th>
+                            <th class="border-r border-slate-600 px-4 py-3 uppercase tracking-wider font-semibold">Marzo</th>
+                            <th class="border-r border-slate-600 px-4 py-3 bg-pink-700 uppercase tracking-wider font-semibold">TOTAL</th>
+                            <th class="px-4 py-3 bg-pink-700 uppercase tracking-wider font-semibold">PROMEDIO</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                            <td class="border-r border-slate-200 px-4 py-3 text-left font-medium text-slate-700">Pérez, Juan</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$1,500.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$1,650.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$1,800.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 bg-pink-50/50"></td>
+                            <td class="px-4 py-3 bg-pink-50/50"></td>
+                        </tr>
+                        <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                            <td class="border-r border-slate-200 px-4 py-3 text-left font-medium text-slate-700">Gómez, Ana</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$2,100.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$1,900.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$2,200.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 bg-pink-50/50"></td>
+                            <td class="px-4 py-3 bg-pink-50/50"></td>
+                        </tr>
+                        <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                            <td class="border-r border-slate-200 px-4 py-3 text-left font-medium text-slate-700">López, Carlos</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$1,200.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$1,300.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$1,150.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 bg-pink-50/50"></td>
+                            <td class="px-4 py-3 bg-pink-50/50"></td>
+                        </tr>
+                        <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                            <td class="border-r border-slate-200 px-4 py-3 text-left font-medium text-slate-700">Martínez, Lucía</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$2,500.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$2,600.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$2,450.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 bg-pink-50/50"></td>
+                            <td class="px-4 py-3 bg-pink-50/50"></td>
+                        </tr>
+                        <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                            <td class="border-r border-slate-200 px-4 py-3 text-left font-medium text-slate-700">Rodríguez, Luis</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$1,800.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$1,750.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 text-slate-600">$1,900.00</td>
+                            <td class="border-r border-slate-200 px-4 py-3 bg-pink-50/50"></td>
+                            <td class="px-4 py-3 bg-pink-50/50"></td>
+                        </tr>
+                    </tbody>
+                    
+                    <tfoot class="bg-slate-100 font-bold text-slate-800">
+                        <tr class="border-t-2 border-slate-400">
+                            <td class="border-r border-slate-300 px-4 py-3 text-left text-pink-700">TOTALES MES</td>
+                            <td class="border-r border-slate-300 px-4 py-3 bg-slate-200/50"></td>
+                            <td class="border-r border-slate-300 px-4 py-3 bg-slate-200/50"></td>
+                            <td class="border-r border-slate-300 px-4 py-3 bg-slate-200/50"></td>
+                            <td colspan="2" class="px-4 py-3 bg-slate-200 diagonal-strike"></td>
+                        </tr>
+                        <tr class="border-t border-slate-300">
+                            <td class="border-r border-slate-300 px-4 py-3 text-left text-pink-700">VENTA MÁXIMA</td>
+                            <td class="border-r border-slate-300 px-4 py-3 bg-slate-200/50"></td>
+                            <td class="border-r border-slate-300 px-4 py-3 bg-slate-200/50"></td>
+                            <td class="border-r border-slate-300 px-4 py-3 bg-slate-200/50"></td>
+                            <td colspan="2" class="px-4 py-3 bg-slate-200 diagonal-strike"></td>
+                        </tr>
+                        <tr class="border-t border-slate-300">
+                            <td class="border-r border-slate-300 px-4 py-3 text-left text-pink-700">VENTA MÍNIMA</td>
+                            <td class="border-r border-slate-300 px-4 py-3 bg-slate-200/50"></td>
+                            <td class="border-r border-slate-300 px-4 py-3 bg-slate-200/50"></td>
+                            <td class="border-r border-slate-300 px-4 py-3 bg-slate-200/50"></td>
+                            <td colspan="2" class="px-4 py-3 bg-slate-200 diagonal-strike"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <style>
+                .diagonal-strike {
+                    background: linear-gradient(to top right, transparent calc(50% - 1px), #cbd5e1, transparent calc(50% + 1px));
+                    background-color: #e2e8f0;
+                }
+            </style>
+        </div>
+
+        <!-- HOJA 3: INSTRUCCIONES -->
+        <div id="tab-instrucciones" class="tab-content bg-white p-6 md:p-8 rounded-b-lg shadow-sm border border-slate-200 border-t-0 border-t-blue-500" style="border-top-width: 4px;">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="bg-blue-100 p-2 rounded text-blue-600"><i class="fa-solid fa-list-ol"></i></div>
+                <h2 class="text-2xl font-bold text-slate-800">Guía Paso a Paso</h2>
+            </div>
+            
+            <div class="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-blue-500 before:to-slate-200">
+                
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-500 text-white font-bold shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">1</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-5 rounded-lg shadow-sm border border-slate-200 ml-4 md:ml-0">
+                        <h4 class="font-bold text-slate-800 text-lg mb-2">Preparación</h4>
+                        <p class="text-sm text-slate-600">Haz clic en el botón verde "Descargar Excel" de la parte superior. Abre el archivo generado en tu computadora y ubícate en la primera pestaña llamada <strong>ELEMENTAL</strong>.</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-500 text-white font-bold shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">2</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-5 rounded-lg shadow-sm border border-slate-200 ml-4 md:ml-0">
+                        <h4 class="font-bold text-slate-800 text-lg mb-2">Operaciones Básicas</h4>
+                        <p class="text-sm text-slate-600">En la hoja ELEMENTAL, llena la columna "Resultado" de la primera tabla utilizando el teclado y los signos <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code>.</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-500 text-white font-bold shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">3</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-5 rounded-lg shadow-sm border border-slate-200 ml-4 md:ml-0">
+                        <h4 class="font-bold text-slate-800 text-lg mb-2">Jerarquía de Datos</h4>
+                        <p class="text-sm text-slate-600 mb-3">En la misma hoja, resuelve las tablas <strong>CASO TIPO 1</strong> y <strong>CASO TIPO 2</strong> tal como se muestra en la web.</p>
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-3 text-xs text-blue-800 rounded-r">
+                            <strong>Análisis Lógico:</strong> Nota cómo <code>23+7-5/5</code> da un resultado totalmente distinto a <code>(23+7-5)/5</code>. Los paréntesis le indican a Excel qué calcular primero.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-500 text-white font-bold shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">4</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-5 rounded-lg shadow-sm border border-slate-200 ml-4 md:ml-0">
+                        <h4 class="font-bold text-slate-800 text-lg mb-2">Funciones Estadísticas</h4>
+                        <p class="text-sm text-slate-600">Pásate a la hoja <strong>OPERACIONES</strong>. Utiliza <code>=SUMA()</code> para los totales por mes (columnas) y por vendedor (filas). Luego aplica <code>=PROMEDIO()</code>.</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-500 text-white font-bold shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">5</div>
+                    <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-5 rounded-lg shadow-sm border border-slate-200 ml-4 md:ml-0">
+                        <h4 class="font-bold text-slate-800 text-lg mb-2">Máximos y Mínimos</h4>
+                        <p class="text-sm text-slate-600">Finaliza la tabla usando <code>=MAX()</code> para hallar la venta más alta de cada mes, y <code>=MIN()</code> para la venta más baja. Guarda tu archivo y súbelo a la plataforma.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN EXTRA: Curiosidades -->
+        <div class="mt-12 bg-slate-900 text-slate-100 rounded-xl p-6 md:p-8 shadow-xl relative overflow-hidden border-b-4 border-green-500 page-break-before">
+            <!-- Decorative background elements -->
+            <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-green-500/10 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl"></div>
+            
+            <h3 class="text-2xl font-bold mb-6 relative z-10 flex items-center gap-3">
+                <div class="bg-slate-800 p-2 rounded-lg text-yellow-400 border border-slate-700 shadow-inner"><i class="fa-solid fa-lightbulb"></i></div>
+                Curiosidades de Excel
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                <div class="bg-slate-800/80 backdrop-blur-sm p-5 rounded-lg border border-slate-700 hover:border-green-500/50 transition-colors group">
+                    <h4 class="font-bold text-green-400 mb-2 group-hover:text-green-300 transition-colors flex items-center gap-2">
+                        <i class="fa-brands fa-apple"></i> ¿Nació en Apple?
+                    </h4>
+                    <p class="text-sm text-slate-300 leading-relaxed">La primera versión de Microsoft Excel fue lanzada en 1985, ¡pero exclusivamente para las computadoras Macintosh de Apple! No fue hasta 1987 que se lanzó la primera versión para Windows.</p>
+                </div>
+                
+                <div class="bg-slate-800/80 backdrop-blur-sm p-5 rounded-lg border border-slate-700 hover:border-blue-500/50 transition-colors group">
+                    <h4 class="font-bold text-blue-400 mb-2 group-hover:text-blue-300 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-border-all"></i> Millones de Celdas
+                    </h4>
+                    <p class="text-sm text-slate-300 leading-relaxed">Una sola hoja de Excel moderno tiene exactamente <strong>1,048,576 filas</strong> y <strong>16,384 columnas</strong>. ¡Eso significa que hay más de 17 mil millones de celdas disponibles en una sola pestaña!</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-slate-200 border-t border-slate-300 py-8 mt-auto print:bg-white print:border-none">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="font-bold text-slate-700 mb-1">Unidad Educativa Vicentina Daniel Hermida</p>
+            <p class="text-sm text-slate-500">Material de Práctica Interactivo - Informática Aplicada | Periodo 2026-2027</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- 1. Lógica para cambiar de Pestañas ---
+        function openTab(tabId, btnElement) {
+            // Ocultar todos los contenidos
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Resetear estilos de todos los botones
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = 'tab-btn px-6 py-3 font-bold text-slate-500 border-b-4 border-transparent bg-transparent hover:bg-slate-100 whitespace-nowrap transition-colors';
+            });
+            
+            // Mostrar contenido seleccionado
+            document.getElementById(tabId).classList.add('active');
+            
+            // Aplicar estilos al botón activo según su color de data-attribute
+            const color = btnElement.getAttribute('data-color');
+            btnElement.className = `tab-btn px-6 py-3 font-bold bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] whitespace-nowrap transition-colors border-b-4`;
+            
+            if(color === 'green') {
+                btnElement.classList.add('text-green-700', 'border-green-500');
+            } else if(color === 'pink') {
+                btnElement.classList.add('text-pink-600', 'border-pink-500');
+            } else if(color === 'blue') {
+                btnElement.classList.add('text-blue-600', 'border-blue-500');
+            }
+        }
+
+        // --- 2. Lógica para Exportar a Excel con SheetJS ---
+        function descargarExcel() {
+            // Crear nuevo libro de trabajo (Workbook)
+            const wb = XLSX.utils.book_new();
+            
+            // ======= HOJA 1: ELEMENTAL =======
+            const dataElemental = [
+                ["OPERACIONES ELEMENTALES"],
+                [],
+                ["Operación", "Símbolo", "Ejemplo a Digitar", "Resultado"],
+                ["Suma", "+", "=5+5", ""],
+                ["Resta", "-", "=10-3", ""],
+                ["Multiplicación", "*", "=4*4", ""],
+                ["División", "/", "=20/4", ""],
+                ["Exponenciación", "^", "=2^3", ""],
+                [],
+                ["CASO TIPO 1"],
+                ["***En caso de que utilices varios operadores en una misma fórmula, Excel establece prioridad entre ellos"],
+                ["(en 1er lugar las multiplicaciones y divisiones y luego las sumas y las restas)"],
+                ["calcular", "resultado"],
+                ["2+3*4", ""],
+                ["32-30/2", ""],
+                ["23+7-5/5", ""],
+                ["23+7-5/5*4", ""],
+                ["2^3-5*5", ""],
+                ["5*5-3^2", ""],
+                [],
+                ["CASO TIPO 2"],
+                ["*** Para cambiar las prioridades en las operaciones utilizamos los paréntesis"],
+                ["calcular", "resultado", "", "calcular", "resultado"],
+                ["(2+3)*4", "", "", "23+(7-5)/5", ""],
+                ["(32-30)/2", "", "", "23+(7-5/5)", ""],
+                ["(23+7-5)/5", "", "", "(23+7-5/5)*4", ""],
+                ["(23+7-5)/5*4", "", "", "2^(3-5*5)", ""],
+                ["(2^3-5)*5", "", "", "(5*5-3)^2", ""],
+                ["5*(5-3^2)", "", "", "((5*5-3)^2)+2", ""]
+            ];
+            const wsElemental = XLSX.utils.aoa_to_sheet(dataElemental);
+            
+            // Ajustar ancho de columnas Hoja 1
+            wsElemental['!cols'] = [
+                {wch: 25}, // A
+                {wch: 15}, // B
+                {wch: 10}, // C
+                {wch: 25}, // D
+                {wch: 15}  // E
+            ];
+            XLSX.utils.book_append_sheet(wb, wsElemental, "ELEMENTAL");
+
+            // ======= HOJA 2: OPERACIONES =======
+            const dataOperaciones = [
+                ["FUNCIONES ESTADÍSTICAS"],
+                [],
+                ["VENDEDORES", "Enero", "Febrero", "Marzo", "TOTAL", "PROMEDIO"],
+                ["Pérez, Juan", 1500, 1650, 1800, "", ""],
+                ["Gómez, Ana", 2100, 1900, 2200, "", ""],
+                ["López, Carlos", 1200, 1300, 1150, "", ""],
+                ["Martínez, Lucía", 2500, 2600, 2450, "", ""],
+                ["Rodríguez, Luis", 1800, 1750, 1900, "", ""],
+                [],
+                ["TOTALES MES", "", "", "", "", ""],
+                ["VENTA MÁXIMA", "", "", "", "", ""],
+                ["VENTA MÍNIMA", "", "", "", "", ""]
+            ];
+            const wsOperaciones = XLSX.utils.aoa_to_sheet(dataOperaciones);
+            
+            // Ajustar ancho de columnas Hoja 2
+            wsOperaciones['!cols'] = [
+                {wch: 20}, // A
+                {wch: 12}, // B
+                {wch: 12}, // C
+                {wch: 12}, // D
+                {wch: 15}, // E
+                {wch: 15}  // F
+            ];
+            XLSX.utils.book_append_sheet(wb, wsOperaciones, "OPERACIONES");
+
+            // ======= DESCARGAR =======
+            XLSX.writeFile(wb, "Practica_1_Excel_VDH.xlsx");
+        }
+    </script>
+</body>
+</html>
